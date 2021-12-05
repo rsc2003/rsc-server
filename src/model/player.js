@@ -704,29 +704,27 @@ class Player extends Character {
     // broadcast the player changing sprites
     broadcastDirection() {
         // temp debug
-        if (!this.moveTick) {
-            this.moveTick = this.world.ticks;
-        } else {
-            if (this.moveTick === this.world.ticks) {
-                throw new Error('two broadcasts in one tick');
-            }
+        //another fuckiing try catch
+        try{
+          if (!this.moveTick) {
+              this.moveTick = this.world.ticks;
+          } else {
+              if (this.moveTick === this.world.ticks) {
+                  throw new Error('two broadcasts in one tick');
+              }
+              this.moveTick = this.world.ticks;
+          }
 
-            this.moveTick = this.world.ticks;
+          for (const player of this.localEntities.known.players) {
+              if (!player.loggedIn) { continue;}
+              if (!player.localEntities.added.players.has(this) && !player.localEntities.removed.players.has(this)) {
+                  player.localEntities.spriteChanged.players.add(this);
+              }
+          }
+        }catch(bde){
+          console.log(bde)
         }
-
-        for (const player of this.localEntities.known.players) {
-            if (!player.loggedIn) {
-                continue;
-            }
-
-            if (
-                !player.localEntities.added.players.has(this) &&
-                !player.localEntities.removed.players.has(this)
-            ) {
-                player.localEntities.spriteChanged.players.add(this);
-            }
-        }
-    }
+    }//END broadcastDirection
 
     // broadcast the player moving in their current direction
     broadcastMove() {

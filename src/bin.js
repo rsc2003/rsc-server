@@ -9,23 +9,18 @@ const yargs = require('yargs');
 
 const log = require('bole')('bin');
 
-const argv = yargs
-    .scriptName('rsc-server')
-    .alias('h', 'help')
-    .option('c', {
+const argv = yargs.scriptName('rsc-server').alias('h', 'help').option('c', {
         alias: 'config',
         type: 'string',
         describe: 'use a specific config.json file',
         default: './config.json'
-    })
-    .option('v', {
+    }).option('v', {
         alias: 'verbose',
         type: 'string',
         describe: 'the logging verbosity level',
         default: 'info',
         choices: ['debug', 'info', 'warn', 'error']
-    })
-    .version(pkg.version).argv;
+    }).version(pkg.version).argv;
 
 bole.output({
     level: argv.verbose,

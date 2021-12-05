@@ -113,17 +113,19 @@ class Server {
     }
 
     bindWebSocket() {
+      try{
         const port = this.config.websocketPort;
-
         this.websocketServer = new ws.Server({ port });
         this.websocketServer.on('error', (err) => log.error(err));
-
         this.websocketServer.on('connection', (socket) => {
             this.handleConnection(socket);
         });
-
         log.info(`listening for websocket connections on port ${port}`);
-    }
+      }catch(bwse){
+        console.log(bwse);
+      }
+
+    }//END bindWebSocket
 
     bindWebWorker() {
         addEventListener('message', (e) => {
@@ -147,33 +149,40 @@ class Server {
                 }
             }
         });
-    }
+    }//END bindWebWorker
 
     readMessages() {
+      //another try catch to fix shsit -K
+      try{
         for (const [socket, queue] of this.incomingMessages) {
             for (const message of queue) {
                 const handler = this.handlers[message.type];
-
                 if (!handler) {
                     log.warn(`${socket} no handler for type ${message.type}`);
                     continue;
                 }
-
                 handler(socket, message).catch((e) => {
                     log.error(e, socket.toString());
                 });
             }
-
             queue.length = 0;
         }
-    }
+      }catch(rme){
+        console.log(rme)
+      }
+    }//END readMessages
 
     sendMessages() {
+      //another try catch to fix shsit -K
+      try{
         while (this.outgoingMessages.length) {
             const { socket, message } = this.outgoingMessages.shift();
             socket.sendMessage(message);
         }
-    }
+      }catch(sme){
+        console.log(sme);
+      }
+    }//end sendMessages
 
     async init() {
         try {
