@@ -88,21 +88,29 @@ class BrowserDataClient {
     }
 
     async save() {
+      //yet another try captcha
+      try{
         await idbKeyval.set('playerID', this.playerID);
-
-        await idbKeyval.set(
-            'players',
-            JSON.stringify(Array.from(this.players.entries()))
-        );
-    }
+        await idbKeyval.set('players',JSON.stringify(Array.from(this.players.entries())));
+      }catch(se){
+        console.log(se)
+      }
+    }//END save
 
     async savePlayer(player) {
+      //moao trycatch
+      try{
         player.password = this.players.get(player.username).password;
         this.players.set(player.username, JSON.parse(JSON.stringify(player)));
         await this.save();
-    }
+      }catch(spe){
+        console.log(spe)
+      }
+    }//END savePlayer
 
     async sendAndReceive(message) {
+      console.log(`sendAndReceive message:`);
+      console.log(message);
         switch (message.handler) {
             case 'playerRegister': {
                 message.username = message.username.toLowerCase();

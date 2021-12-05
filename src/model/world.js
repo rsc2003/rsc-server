@@ -195,8 +195,13 @@ class World {
     }
 
     removeEntity(type, entity) {
-        if (!this[type].remove(entity)) {
-            throw new Error(`unable to remove entity ${entity}`);
+      //added a try/catch tro help stop crashes -K
+      try{
+        let nuke = this[type].remove(entity);
+        if (!nuke) {
+            //throw new Error(`unable to remove entity`);
+            console.log(`Unable to Remove Entity:`);
+            console.log(entity);
         }
 
         if (type === 'players') {
@@ -226,18 +231,29 @@ class World {
                 player.localEntities.removed[type].add(entity);
             }
         }
-    }
+      }catch(fuck){
+        console.log(`removeEntity ERROR:`);
+        console.log(fuck)
+      }
+    }//END removeEntity
 
     replaceEntity(type, entity, newID) {
+      //added a try/catch tro help stop crashes -K
+      try{
         const Entity = entityConstructors[type];
         const newEntity = new Entity(this, { ...entity, id: newID });
         this.removeEntity(type, entity);
         this.addEntity(type, newEntity);
-
         return newEntity;
-    }
+      }catch(fok){
+        console.log(`replaceEntity ERROR:`);
+        console.log(fok)
+      }
+    }//END replaceEntity
 
     loadEntities(type) {
+      //added a try/catch tro help stop crashes -K
+      try{
         for (const entityLocation of entityLocations[type]) {
             const Entity = entityConstructors[type];
             const entity = new Entity(this, entityLocation);
@@ -246,24 +262,18 @@ class World {
             if (!this.members && entity.definition.members) {
                 continue;
             }
-
             const flatY = entity.y % this.planeElevation;
-
-            if (
-                !this.members &&
-                (entity.x > FREE_BOUNDS.maxX ||
-                    entity.x < FREE_BOUNDS.minX ||
-                    flatY > FREE_BOUNDS.maxY ||
-                    flatY < FREE_BOUNDS.minY)
-            ) {
+            if(!this.members && (entity.x > FREE_BOUNDS.maxX || entity.x < FREE_BOUNDS.minX || flatY > FREE_BOUNDS.maxY || flatY < FREE_BOUNDS.minY)) {
                 continue;
             }
-
             this.addEntity(type, entity);
         }
-
         log.info(`loaded ${this[type].length} ${type.slice(0, -1)} locations`);
-    }
+      }catch(fuk){
+        console.log(`loadEntities ERROR:`);
+        console.log(fuk)
+      }
+    }//END loadEntities
 
     loadShops() {
         for (const shopName of Shop.names) {
@@ -445,14 +455,16 @@ class World {
     }
 
     clearTimeout(id) {
-        clearTimeout(id);
-    }
+      //added trycatch -K
+      try{clearTimeout(id)}catch(ee){console.log(ee)}
+    }//end clearTimeout
 
     sleep(ms) {
         return new Promise((resolve) => this.setTimeout(resolve, ms));
-    }
+    }//END sleep
 
     tick() {
+
         this.ticks += 1;
 
         const startTime = Date.now();
@@ -463,7 +475,7 @@ class World {
             for (const [id, entry] of this.tickFunctions) {
                 entry.ticks -= 1;
 
-                if (entry.ticks === 0) {
+                if (entry.ticks == 0) {
                     entry.func();
                     this.tickFunctions.delete(id);
                 }
