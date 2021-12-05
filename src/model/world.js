@@ -195,8 +195,13 @@ class World {
     }
 
     removeEntity(type, entity) {
+      try{
+
+      }catch(fuck){
+        console.log(fuck)
+      }
         if (!this[type].remove(entity)) {
-            throw new Error(`unable to remove entity ${entity}`);
+            throw new Error(`unable to remove entity ${JSON.stringify(entity)}`);
         }
 
         if (type === 'players') {
@@ -463,7 +468,7 @@ class World {
             for (const [id, entry] of this.tickFunctions) {
                 entry.ticks -= 1;
 
-                if (entry.ticks === 0) {
+                if (entry.ticks == 0) {
                     entry.func();
                     this.tickFunctions.delete(id);
                 }
